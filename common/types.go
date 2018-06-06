@@ -116,12 +116,18 @@ type NetworkInfo struct {
 	HighwaySubnet  string `json:"highwaySubnet,omitempty"`
 }
 
+type ContainerNetworkInfo struct {
+	Mode string  `json:"mode,omitempty"`
+	Cidr string  `json:"cidr,omitempty"`
+}
+
 type SpecInfo struct {
 	ClusterType string      `json:"type,omitempty"`
 	Flavor      string      `json:"flavor,omitempty"`
 	K8sVersion  string      `json:"version,omitempty"`
 	Description string		`json:"description,omitempty"`
 	HostNetwork *NetworkInfo `json:"hostNetwork,omitempty"`
+	ContainerNetwork *ContainerNetworkInfo `json:"containerNetwork,omitempty"`
 }
 
 type EndPoints struct {
