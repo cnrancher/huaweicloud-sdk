@@ -149,7 +149,7 @@ type StatusInfo struct {
 
 type ClusterInfo struct {
 	Kind       string    	`json:"kind"`
-	ApiVersion string    	`json:"apiversion"`
+	ApiVersion string    	`json:"apiVersion"`
 	MetaData   MetaInfo  	`json:"metadata"`
 	Spec       SpecInfo  	`json:"spec"`
 	Status	   StatusInfo	`json:"status,omitempty"`
