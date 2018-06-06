@@ -111,17 +111,17 @@ type MetaInfo struct {
 }
 
 type NetworkInfo struct {
-	Vpc            string `json:"vpc"`
-	Subnet         string `json:"subnet"`
-	HighwaySubnet  string `json:"highwaySubnet"`
+	Vpc            string `json:"vpc,omitempty"`
+	Subnet         string `json:"subnet,omitempty"`
+	HighwaySubnet  string `json:"highwaySubnet,omitempty"`
 }
 
 type SpecInfo struct {
-	ClusterType string      `json:"type"`
-	Flavor      string      `json:"flavor"`
-	K8sVersion  string      `json:"version"`
-	Description string		`json:"description"`
-	HostNetwork NetworkInfo `json:"hostNetwork"`
+	ClusterType string      `json:"type,omitempty"`
+	Flavor      string      `json:"flavor,omitempty"`
+	K8sVersion  string      `json:"version,omitempty"`
+	Description string		`json:"description,omitempty"`
+	HostNetwork *NetworkInfo `json:"hostNetwork,omitempty"`
 }
 
 type EndPoints struct {
@@ -139,12 +139,12 @@ type Conditions struct {
 }
 
 type StatusInfo struct {
-	Phase      	string    	`json:"phase,omitempty"`
-	JobID      	string    	`json:"jobID,omitempty"`
-	Reason     	string    	`json:"reason,omitempty"`
-	Message     string    	`json:"message,omitempty"`
-	Conditions  Conditions 	`json:"conditions,omitempty"`
-	Endpoints  	EndPoints  	`json:"endpoints,omitempty"`
+	Phase      	string    		`json:"phase,omitempty"`
+	JobID      	string    		`json:"jobID,omitempty"`
+	Reason     	string    		`json:"reason,omitempty"`
+	Message     string    		`json:"message,omitempty"`
+	Conditions  *Conditions 	`json:"conditions,omitempty"`
+	Endpoints  	*EndPoints  	`json:"endpoints,omitempty"`
 }
 
 type ClusterInfo struct {
@@ -152,7 +152,7 @@ type ClusterInfo struct {
 	ApiVersion string    	`json:"apiVersion"`
 	MetaData   MetaInfo  	`json:"metadata"`
 	Spec       SpecInfo  	`json:"spec"`
-	Status	   StatusInfo	`json:"status,omitempty"`
+	Status	   *StatusInfo	`json:"status,omitempty"`
 }
 
 //update cluster struct
