@@ -131,8 +131,8 @@ type SpecInfo struct {
 }
 
 type EndPoints struct {
-	Internal string `json:"internal,omitempty"`
-	External string `json:"external,omitempty"`
+	Url  string `json:"url,omitempty"`
+	Type string `json:"type,omitempty"`
 }
 
 type Conditions struct {
@@ -150,7 +150,7 @@ type StatusInfo struct {
 	Reason     	string    		`json:"reason,omitempty"`
 	Message     string    		`json:"message,omitempty"`
 	Conditions  *Conditions 	`json:"conditions,omitempty"`
-	Endpoints  	*EndPoints  	`json:"endpoints,omitempty"`
+	Endpoints  	[]EndPoints  	`json:"endpoints,omitempty"`
 }
 
 type ClusterInfo struct {
@@ -216,7 +216,7 @@ type NodeSpecInfo struct {
 }
 
 type NodeStatusInfo struct {
-	JobID string `json:"jobID"`
+	JobID string `json:"jobID,omitempty"`
 }
 
 type NodeInfo struct {
@@ -224,7 +224,7 @@ type NodeInfo struct {
 	ApiVersion string    		`json:"apiversion"`
 	MetaData   NodeMetaInfo  	`json:"metadata"`
 	Spec       NodeSpecInfo  	`json:"spec"`
-	Status	   NodeStatusInfo	`json:"status,omitempty"`
+	Status	   *NodeStatusInfo	`json:"status,omitempty"`
 }
 
 //Cluster cert info
