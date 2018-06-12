@@ -108,6 +108,7 @@ type MetaInfo struct {
 	Uid                  string `json:"uid,omitempty"`
 	CreationTimestamp    string `json:"creationTimestamp,omitempty"`
 	UpdateTimestamp      string `json:"updateTimestamp,omitempty"`
+	Labels               map[string]string `json:"labels,omitempty"`
 }
 
 type NetworkInfo struct {
@@ -175,6 +176,7 @@ type NodeMetaInfo struct {
 	Uid                  string `json:"uid"`
 	CreationTimestamp    string `json:"creationTimestamp,omitempty"`
 	UpdateTimestamp      string `json:"updateTimestamp,omitempty"`
+	Labels               map[string]string `json:"labels,omitempty"`
 }
 
 type NodeLogin struct {
