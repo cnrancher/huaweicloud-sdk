@@ -189,32 +189,31 @@ type NodeVolume struct {
 }
 
 type Bandwidth struct {
-	ChargeMode     string 	`json:"chargemode"`
-	Size           int64    `json:"size"`
-	ShareType      string 	`json:"sharetype"`
+	ChargeMode     string 	`json:"chargemode,omitempty"`
+	Size           int64    `json:"size,omitempty"`
+	ShareType      string 	`json:"sharetype,omitempty"`
 }
 
 type Eip struct {
-	Iptype    string    `json:"iptype"`
-	Bandwidth Bandwidth `json:"bandwidth"`
+	Iptype    string    `json:"iptype,omitempty"`
+	Bandwidth Bandwidth `json:"bandwidth,omitempty"`
 }
 
 type PublicIP struct {
-	Ids    []string   	`json:"ids"`
-	Count  int64        `json:"count"`
-	Eip    Eip        	`json:"eip"`
+	Ids    []string   	`json:"ids,omitempty"`
+	Count  int64        `json:"count,omitempty"`
+	Eip    Eip        	`json:"eip,omitempty"`
 }
 
 type NodeSpecInfo struct {
-	ClusterType    string       	`json:"type"`
 	Flavor         string       	`json:"flavor"`
 	AvailableZone  string       	`json:"az"`
 	Login          NodeLogin    	`json:"login"`
 	RootVolume     NodeVolume   	`json:"rootVolume"`
 	DataVolumes    []NodeVolume 	`json:"dataVolumes"`
-	PublicIP       PublicIP   		`json:"publicIP"`
-	Count          int64          	`json:"count"`
-	BillingMode    int64          	`json:"billingMode"`
+	PublicIP       PublicIP   		`json:"publicIP,omitempty"`
+	Count          int64          	`json:"count,omitempty"`
+	BillingMode    int64          	`json:"billingMode,omitempty"`
 }
 
 type NodeStatusInfo struct {
