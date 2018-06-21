@@ -242,7 +242,7 @@ type Cluster struct{
 }
 type ClusterConfig struct {
 	Name     string     `json:"name,omitempty"`
-	Cluster  Cluster	`json:"clusters,omitempty"`
+	Cluster  Cluster	`json:"cluster,omitempty"`
 }
 
 type User struct {
