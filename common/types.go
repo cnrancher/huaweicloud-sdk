@@ -218,6 +218,7 @@ type NodeSpecInfo struct {
 
 type NodeStatusInfo struct {
 	JobID string `json:"jobID,omitempty"`
+	Phase string `json:"phase,omitempty"`
 }
 
 type NodeInfo struct {
@@ -226,6 +227,12 @@ type NodeInfo struct {
 	MetaData   NodeMetaInfo  	`json:"metadata"`
 	Spec       NodeSpecInfo  	`json:"spec"`
 	Status	   *NodeStatusInfo	`json:"status,omitempty"`
+}
+
+type NodeListInfo struct {
+	Kind       string           `json:"kind,omitempty"`
+	ApiVersion string           `json:"apiVersion,omitempty"`
+	Items      []NodeInfo       `json:"items,omitempty"`
 }
 
 //Cluster cert info
