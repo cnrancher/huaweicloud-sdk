@@ -326,3 +326,31 @@ type PortDesc struct {
 type EipAssocArg struct {
 	Port PortDesc `json:"publicip,omitempty"`
 }
+
+//Job status
+type JobMetaData struct {
+	Uid					string `json:"uid,omitemtpy"`
+	CreationTimestamp	string `json:"creationTimestamp,omitempty"`
+	UpdateTimestamp		string `json:"updateTimestamp,omitempty"`
+}
+
+type JobSpec struct {
+	Type 		string `json:"type,omitemtpy"`
+	ClusterUid  string `json:"clusterUID,omitempty"`
+	ResourceId  string `json:"resourceID,omitempty"`
+	ResourceName string `json:"resourceName,omitemtpy"`
+}
+
+type JobStatus struct {
+	Phase    string `json:"phase,omitempty"`
+	Reason   string `json:"reason,omitempty"`
+	Message  string `json:"message,omitempty"`
+}
+
+type JobInfo struct {
+	Kind		string 		`json:"kind,omitempty"`
+	ApiVersion  string 		`json:"apiVersion,omitempty"`
+	Metadata    JobMetaData	`json:"metadata,omitempty"`
+	Spec 		JobSpec		`json:"spec,omitempty"`
+	Status      JobStatus   `json:"status,omitempty"`
+}
