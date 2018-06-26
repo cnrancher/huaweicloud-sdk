@@ -86,6 +86,7 @@ type Subnet struct {
 	AvailabilityZone 	string `json:"availability_zone"` // Specifies the ID of the AZ to which the subnet belongs.
 	VpcId            	string `json:"vpc_id"`            // Specifies the ID of the VPC to which the subnet belongs.
 	Status            	string `json:"status"`            // Specifies the status of the subnet.The value can be ACTIVE, DOWN, BUILD, ERROR, or DELETE.
+	NetworkId           string `json:"neutron_network_id"`
 }
 
 type NodeConfig struct {
@@ -269,4 +270,59 @@ type ClusterCert struct {
 	Clusters    []ClusterConfig		`json:"clusters,omitempty"`
 	Users       []UserConfig    	`json:"users,omitempty"`
 	Contexts    []ContextConfig     `json:"contexts,omitempty"`
+}
+
+//EIP info
+type PubIp struct {
+	Type string `json:"type,omitempty"`
+}
+
+type BandwidthDesc struct {
+	Name    string `json:"name,omitempty"`
+	Size    uint32 `json:"size,omitempty"`
+	ShrType string `json:"share_type,omitempty"`
+	ChgMode string `json:"charge_mode,omitempty"`
+}
+
+type EipAllocArg struct {
+	EipDesc   PubIp  		`json:"publicip,omitempty"`
+	BandWidth BandwidthDesc `json:"bandwidth,omitempty"`
+}
+
+type EipInfo struct {
+	Id         		  string `json:"id,omitempty"`
+	Status     		  string `json:"status,omitempty"`
+	Type       		  string `json:"type,omitempty"`
+	Addr       		  string `json:"public_ip_address,omitempty"`
+	TenantId   		  string `json:"tenant_id,omitempty"`
+	CreateTime 		  string `json:"create_time,omitempty"`
+	BandwidthSize     uint32 `json:"bandwidth_size,omitempty"`
+}
+
+type EipResp struct {
+	Eip EipInfo `json:"publicip,omitempty"`
+}
+
+//Port info
+type FixedIp struct {
+	SubnetId  string `json:"subnet_id,omitempty"`
+	IpAddress string `json:"ip_address,omitempty"`
+}
+
+type PortInfo struct {
+	Id 			string 		`json:"id,omitempty"`
+	Status      string 		`json:"status,omitempty"`
+	FixedIps    []FixedIp 	`json:"fixed_ips,omitempty"`
+}
+
+type Ports struct {
+	Ports []PortInfo `json:"ports,omitempty"`
+}
+
+type PortDesc struct {
+	PortId string `json:"port_id,omitempty"`
+}
+
+type EipAssocArg struct {
+	Port PortDesc `json:"publicip,omitempty"`
 }
