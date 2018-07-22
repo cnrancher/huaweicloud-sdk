@@ -99,6 +99,7 @@ type NodeConfig struct {
 	DataVolumeType  string
 	BillingMode     int64
 	NodeCount       int64
+	NodeOperationSystem string
 	PublicIP        PublicIP
 	NodeLabels      map[string]string
 }
@@ -123,11 +124,21 @@ type ContainerNetworkInfo struct {
 	Cidr string  `json:"cidr,omitempty"`
 }
 
+type AuthenticatingProxy struct {
+	Ca 		string `json:"ca,omitempty"`
+}
+
+type Authentication struct {
+	Mode 					string 					`json:"mode,omitempty"`
+	AuthenticatingProxy	AuthenticatingProxy	`json:"authenticatingProxy,omitempty"`
+}
+
 type SpecInfo struct {
 	ClusterType string      `json:"type,omitempty"`
 	Flavor      string      `json:"flavor,omitempty"`
 	K8sVersion  string      `json:"version,omitempty"`
 	Description string		`json:"description,omitempty"`
+	Authentication Authentication `json:"authentication,omitempty"`
 	HostNetwork *NetworkInfo `json:"hostNetwork,omitempty"`
 	ContainerNetwork *ContainerNetworkInfo `json:"containerNetwork,omitempty"`
 }
@@ -215,6 +226,7 @@ type NodeSpecInfo struct {
 	PublicIP       PublicIP   		`json:"publicIP,omitempty"`
 	Count          int64          	`json:"count,omitempty"`
 	BillingMode    int64          	`json:"billingMode,omitempty"`
+	OperationSystem string 		`json:"os,omitempty"`
 }
 
 type NodeStatusInfo struct {
