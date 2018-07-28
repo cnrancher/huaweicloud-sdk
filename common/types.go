@@ -101,6 +101,7 @@ type NodeConfig struct {
 	NodeCount       int64
 	NodeOperationSystem string
 	PublicIP        PublicIP
+	ExtendParam     ExtendParam
 	NodeLabels      map[string]string
 }
 
@@ -138,6 +139,7 @@ type SpecInfo struct {
 	Flavor      string      `json:"flavor,omitempty"`
 	K8sVersion  string      `json:"version,omitempty"`
 	Description string		`json:"description,omitempty"`
+	BillingMode int64      	`json:"billingMode"`
 	Authentication Authentication `json:"authentication,omitempty"`
 	HostNetwork *NetworkInfo `json:"hostNetwork,omitempty"`
 	ContainerNetwork *ContainerNetworkInfo `json:"containerNetwork,omitempty"`
@@ -217,6 +219,12 @@ type PublicIP struct {
 	Eip    Eip        	`json:"eip,omitempty"`
 }
 
+type ExtendParam struct {
+	BMSPeriodType 	string `json:"BMS:periodType,omitempty"`
+	BMSPeriodNum  	int64 `json:"BMS:periodNum,omitempty"`
+	BMSIsAutoRenew 	string `json:"BMS:isAutoRenew,omitempty"`
+}
+
 type NodeSpecInfo struct {
 	Flavor         string       	`json:"flavor"`
 	AvailableZone  string       	`json:"az"`
@@ -227,6 +235,7 @@ type NodeSpecInfo struct {
 	Count          int64          	`json:"count,omitempty"`
 	BillingMode    int64          	`json:"billingMode,omitempty"`
 	OperationSystem string 		`json:"os,omitempty"`
+	ExtendParam    ExtendParam    `json:"extendParam,omitempty"`
 }
 
 type NodeStatusInfo struct {
