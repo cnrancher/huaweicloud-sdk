@@ -227,9 +227,9 @@ type PublicIP struct {
 }
 
 type ExtendParam struct {
-	BMSPeriodType  string `json:"BMS:periodType,omitempty"`
-	BMSPeriodNum   int64  `json:"BMS:periodNum,omitempty"`
-	BMSIsAutoRenew string `json:"BMS:isAutoRenew,omitempty"`
+	BMSPeriodType  string `json:"periodType,omitempty"`
+	BMSPeriodNum   int64  `json:"periodNum,omitempty"`
+	BMSIsAutoRenew string `json:"isAutoRenew,omitempty"`
 }
 
 type NodeSpecInfo struct {
