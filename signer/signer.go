@@ -38,7 +38,7 @@ func hmacsha256(key []byte, data string) ([]byte, error) {
 	return h.Sum(nil), nil
 }
 
-// Build a CanonicalRequest from a regular request string
+//CanonicalRequest Build a CanonicalRequest from a regular request string
 //
 // See http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 // CanonicalRequest =
@@ -79,13 +79,10 @@ func CanonicalURI(r *http.Request) string {
 	r.URL.Path = strings.Replace(urlpath, "+", "%20", -1)
 	if ok := strings.HasSuffix(r.URL.Path, "/"); ok {
 		return fmt.Sprintf("%s", r.URL.Path)
-	} else {
-		return fmt.Sprintf("%s", r.URL.Path+"/")
 	}
-	//	return fmt.Sprintf("%s", r.URL.Path)
+	return fmt.Sprintf("%s", r.URL.Path+"/")
 }
 
-// CanonicalQueryString
 func CanonicalQueryString(r *http.Request) string {
 	var a []string
 	for key, value := range r.URL.Query() {
@@ -104,7 +101,6 @@ func CanonicalQueryString(r *http.Request) string {
 	return fmt.Sprintf("%s", strings.Join(a, "&"))
 }
 
-// CanonicalHeaders
 func CanonicalHeaders(r *http.Request) string {
 	var a []string
 	for key, value := range r.Header {
@@ -120,7 +116,6 @@ func CanonicalHeaders(r *http.Request) string {
 	return fmt.Sprintf("%s\n", strings.Join(a, "\n"))
 }
 
-// SignedHeaders
 func SignedHeaders(r *http.Request) string {
 	var a []string
 	for key := range r.Header {
@@ -131,7 +126,6 @@ func SignedHeaders(r *http.Request) string {
 	return fmt.Sprintf("%s", strings.Join(a, ";"))
 }
 
-// RequestPayload
 func RequestPayload(r *http.Request) ([]byte, error) {
 	if r.Body == nil {
 		return []byte(""), nil
@@ -141,12 +135,12 @@ func RequestPayload(r *http.Request) ([]byte, error) {
 	return b, err
 }
 
-// Return the Credential Scope. See http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
+//CredentialScope Return the Credential Scope. See http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
 func CredentialScope(t time.Time, regionName, serviceName string) string {
 	return fmt.Sprintf("%s/%s/%s/%s", t.UTC().Format(BasicDateFormatShort), regionName, serviceName, TerminationString)
 }
 
-// Create a "String to Sign". See http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
+//StringToSign Create a "String to Sign". See http://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
 func StringToSign(canonicalRequest, credentialScope string, t time.Time) string {
 	hash := sha256.New()
 	hash.Write([]byte(canonicalRequest))
@@ -154,7 +148,7 @@ func StringToSign(canonicalRequest, credentialScope string, t time.Time) string 
 		Algorithm, t.UTC().Format(BasicDateFormat), credentialScope, hash.Sum(nil))
 }
 
-// Generate a "signing key" to sign the "String To Sign". See http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
+//GenerateSigningKey Generate a "signing key" to sign the "String To Sign". See http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
 func GenerateSigningKey(secretKey, regionName, serviceName string, t time.Time) ([]byte, error) {
 
 	key := []byte(PreSKString + secretKey)
@@ -170,7 +164,7 @@ func GenerateSigningKey(secretKey, regionName, serviceName string, t time.Time) 
 	return key, nil
 }
 
-// Create the HWS Signature. See http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
+//SignStringToSign Create the HWS Signature. See http://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
 func SignStringToSign(stringToSign string, signingKey []byte) (string, error) {
 	hm, err := hmacsha256(signingKey, stringToSign)
 	return fmt.Sprintf("%x", hm), err
@@ -186,7 +180,7 @@ func HexEncodeSHA256Hash(body []byte) (string, error) {
 	return fmt.Sprintf("%x", hash.Sum(nil)), err
 }
 
-// Get the finalized value for the "Authorization" header. The signature parameter is the output from SignStringToSign
+//AuthHeaderValue Get the finalized value for the "Authorization" header. The signature parameter is the output from SignStringToSign
 func AuthHeaderValue(signature, accessKey, credentialScope, signedHeaders string) string {
 	return fmt.Sprintf("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s", Algorithm, accessKey, credentialScope, signedHeaders, signature)
 }
@@ -211,17 +205,22 @@ func trimString(s string) string {
 
 // Signer HWS meta
 type Signer struct {
-	AccessKey string
-	SecretKey string
-	Region    string
-	Service   string
+	AccessKey          string
+	SecretKey          string
+	Region             string
+	GetServiceNameFunc func() string
+	NextTransport      http.RoundTripper
 }
 
 // Sign set Authorization header
-func (s *Signer) Sign(r *http.Request) error {
+func (s *Signer) Sign(r *http.Request) (err error) {
 	var t time.Time
-	var err error
 	var dt string
+	defer func() {
+		if err != nil {
+			err = fmt.Errorf("huaweicloud sdk sign error: %s", err.Error())
+		}
+	}()
 	if dt = r.Header.Get(HeaderXDate); dt != "" {
 		t, err = time.Parse(BasicDateFormat, dt)
 	} else if dt = r.Header.Get(HeaderDate); dt != "" {
@@ -236,9 +235,9 @@ func (s *Signer) Sign(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	credentialScope := CredentialScope(t, s.Region, s.Service)
+	credentialScope := CredentialScope(t, s.Region, s.GetServiceNameFunc())
 	stringToSign := StringToSign(canonicalRequest, credentialScope, t)
-	key, err := GenerateSigningKey(s.SecretKey, s.Region, s.Service, t)
+	key, err := GenerateSigningKey(s.SecretKey, s.Region, s.GetServiceNameFunc(), t)
 	if err != nil {
 		return err
 	}
@@ -250,4 +249,14 @@ func (s *Signer) Sign(r *http.Request) error {
 	authValue := AuthHeaderValue(signature, s.AccessKey, credentialScope, signedHeaders)
 	r.Header.Set(HeaderAuthorization, authValue)
 	return nil
+}
+
+func (s *Signer) RoundTrip(req *http.Request) (*http.Response, error) {
+	if err := s.Sign(req); err != nil {
+		return nil, err
+	}
+	if s.NextTransport != nil {
+		return s.NextTransport.RoundTrip(req)
+	}
+	return http.DefaultTransport.RoundTrip(req)
 }
