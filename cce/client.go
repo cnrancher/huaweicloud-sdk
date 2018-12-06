@@ -1,6 +1,6 @@
 package cce
 
-import "github.com/cnrancher/cce-sdk/common"
+import "github.com/cnrancher/huaweicloud-sdk/common"
 
 func NewClient(baseClient *common.Client) *Client {
 	client := Client{}

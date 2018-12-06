@@ -3,7 +3,7 @@ package network
 import (
 	"testing"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func Test_GetURL(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 	"k8s.io/client-go/dynamic"
 	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"

@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cnrancher/cce-sdk/signer"
+	"github.com/cnrancher/huaweicloud-sdk/signer"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )

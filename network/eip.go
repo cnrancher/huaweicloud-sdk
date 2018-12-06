@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func (c *Client) CreateEIP(ctx context.Context, info *common.EipAllocArg) (*common.EipInfo, error) {

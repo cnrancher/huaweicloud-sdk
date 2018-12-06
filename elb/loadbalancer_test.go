@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cnrancher/cce-sdk/common"
-	"github.com/cnrancher/cce-sdk/network"
+	"github.com/cnrancher/huaweicloud-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/network"
 	"github.com/sirupsen/logrus"
 )
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func Test_CCEGetURL(t *testing.T) {

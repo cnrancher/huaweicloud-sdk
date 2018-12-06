@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

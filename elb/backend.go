@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func (c *Client) AddBackends(ctx context.Context, listenerID string, backends common.ELBBackendRequest) (common.ELBBackendList, error) {

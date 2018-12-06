@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func (c *Client) CreateVPC(ctx context.Context, request *common.VpcRequest) (*common.VpcInfo, error) {
