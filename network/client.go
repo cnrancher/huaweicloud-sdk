@@ -3,7 +3,7 @@ package network
 import (
 	"fmt"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 type Client struct {

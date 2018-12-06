@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cnrancher/cce-sdk/common"
+	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
 func (c *Client) GetLoadBalancers(ctx context.Context) (*common.LoadBalancerList, error) {
