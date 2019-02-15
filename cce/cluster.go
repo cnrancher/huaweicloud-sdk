@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/cnrancher/huaweicloud-sdk/common"
 	"github.com/sirupsen/logrus"
@@ -87,6 +88,28 @@ func (c *Client) DeleteCluster(ctx context.Context, id string) error {
 	}
 
 	return common.WaitForDeleteComplete(ctx, func(ictx context.Context) error {
+		_, err := c.GetCluster(ctx, id)
+		return err
+	})
+}
+
+func (c *Client) DeleteClusterWithTimeout(ctx context.Context, id string, during, timeout time.Duration) error {
+	if id == "" {
+		return errors.New("cluster id is required")
+	}
+	logrus.Infof("Deleting Cluster %s", id)
+	_, err := c.DoRequest(
+		ctx,
+		http.MethodDelete,
+		c.GetURL("clusters", id),
+		nil,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("error deleting cluster: %v", err)
+	}
+
+	return common.WaitForDeleteCompleteWithTimeout(ctx, during, timeout, func(ictx context.Context) error {
 		_, err := c.GetCluster(ctx, id)
 		return err
 	})
