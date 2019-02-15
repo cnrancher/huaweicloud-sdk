@@ -195,6 +195,18 @@ func WaitForDeleteComplete(ctx context.Context, getResourceFunc func(context.Con
 	})
 }
 
+func WaitForDeleteCompleteWithTimeout(ctx context.Context, during, timeout time.Duration, getResourceFunc func(context.Context) error) error {
+	return waitForCompleteUntilTrue(ctx, during, timeout, func(ictx context.Context) (bool, error) {
+		if err := getResourceFunc(ictx); err != nil {
+			eInfo, ok := err.(*ErrorInfo)
+			if ok && eInfo.StatusCode == 404 {
+				return true, nil
+			}
+		}
+		return false, errors.New("delete not complete")
+	})
+}
+
 func WaitForCompleteUntilTrue(ctx context.Context, conditionFunc func(context.Context) (bool, error)) error {
 	return waitForCompleteUntilTrue(ctx, DefaultDuration, DefaultTimeout, conditionFunc)
 }
