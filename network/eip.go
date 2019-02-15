@@ -43,7 +43,7 @@ func (c *Client) GetEIP(ctx context.Context, id string) (*common.EipInfo, error)
 
 func (c *Client) UpdateEIP(ctx context.Context, id string, info *common.EipAssocArg) (*common.EipInfo, error) {
 	if id == "" {
-		return errors.New("eip id is required")
+		return nil, errors.New("eip id is required")
 	}
 	rtn := common.EipInfo{}
 	_, err := c.DoRequest(
