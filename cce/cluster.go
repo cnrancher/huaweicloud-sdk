@@ -32,11 +32,23 @@ func (c *Client) CreateCluster(ctx context.Context, cluster *common.ClusterInfo)
 	return &clusterResp, nil
 }
 
-func (c *Client) UpdateCluster(ctx context.Context, id string, info *common.ClusterInfo) (*common.ClusterInfo, error) {
+func (c *Client) UpdateCluster(ctx context.Context, id string, updateInfo *common.UpdateCluster) (*common.ClusterInfo, error) {
 	if id == "" {
 		return nil, errors.New("cluster id is required")
 	}
-	return nil, nil
+	var clusterResp common.ClusterInfo
+	_, err := c.DoRequest(
+		ctx,
+		http.MethodPut,
+		c.GetURL("clusters", id),
+		updateInfo,
+		&clusterResp,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error updating cluster: %v", err)
+	}
+
+	return &clusterResp, nil
 }
 
 func (c *Client) GetCluster(ctx context.Context, id string) (*common.ClusterInfo, error) {

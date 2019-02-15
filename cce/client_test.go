@@ -27,7 +27,23 @@ func Test_CCEClient(t *testing.T) {
 		t.Skip(err)
 	}
 	cceClient := NewClient(baseClient)
-	_, err = cceClient.GetClusters(context.Background())
+	list, err := cceClient.GetClusters(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list.Items) == 0 {
+		t.Skip()
+	}
+	clusterID := list.Items[0].MetaData.UID
+	originDescription := list.Items[0].Spec.Description
+	rtn, err := cceClient.UpdateCluster(context.Background(), clusterID, &common.UpdateCluster{Spec: common.UpdateInfo{Description: "test"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rtn.Spec.Description != "test" {
+		t.Fatal("update cluster description fail")
+	}
+	_, err = cceClient.UpdateCluster(context.Background(), clusterID, &common.UpdateCluster{Spec: common.UpdateInfo{Description: originDescription}})
 	if err != nil {
 		t.Fatal(err)
 	}
