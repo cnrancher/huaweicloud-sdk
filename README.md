@@ -1,2 +1,2 @@
-# cce-sdk
-This repository is used for the project of Huawei Consumer Cloud. 
+# huaweicloud go-sdk
+Go SDK for Huawei Public cloud
