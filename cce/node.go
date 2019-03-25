@@ -14,6 +14,9 @@ func (c *Client) AddNode(ctx context.Context, clusterid string, info *common.Nod
 	if clusterid == "" {
 		return nil, errors.New("clusterid is required")
 	}
+	if info.MetaData.Name == "" {
+		return nil, errors.New("node name is required")
+	}
 	rtn := common.NodeInfo{}
 	_, err := c.DoRequest(
 		ctx,
