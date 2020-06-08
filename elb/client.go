@@ -29,7 +29,7 @@ func NewClient(baseClient *common.Client) *Client {
 }
 
 func (c *Client) GetBaseURL() string {
-	return fmt.Sprintf("%s%s/%s/elbaas", c.GetAPIEndpointFunc(), c.GetAPIPrefixFunc(), c.ProjectID)
+	return fmt.Sprintf("%s%s/lbaas", c.GetAPIEndpointFunc(), c.GetAPIPrefixFunc())
 }
 
 func serviceName() string {
@@ -37,7 +37,7 @@ func serviceName() string {
 }
 
 func prefix() string {
-	return "/v1.0"
+	return "/v2.0"
 }
 
 func (c *Client) WaitForELBJob(ctx context.Context, duration, timeout time.Duration, jobID string) (bool, *common.JobInfoV1, error) {
@@ -51,7 +51,7 @@ func (c *Client) WaitForELBJob(ctx context.Context, duration, timeout time.Durat
 		_, err := c.DoRequest(
 			ictx,
 			http.MethodGet,
-			strings.Replace(c.GetURL("jobs", jobID), "/elbaas", "", -1),
+			strings.Replace(c.GetURL("jobs", jobID), "/lbaas", "", -1),
 			nil,
 			&jobInfo,
 		)
