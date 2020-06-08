@@ -3,90 +3,55 @@ package elb
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/cnrancher/huaweicloud-sdk/common"
 )
 
-func (c *Client) AddBackends(ctx context.Context, listenerID string, backends common.ELBBackendRequest) (common.ELBBackendList, error) {
-	if listenerID == "" {
-		return nil, errors.New("listener id is required")
+func (c *Client) AddBackend(ctx context.Context, poolID string, backend common.ELBBackendRequest) (common.ELBBackendResponce, error) {
+	if poolID == "" {
+		return common.ELBBackendResponce{}, errors.New("[AddBackend]pool id is required")
 	}
-	backendMap := map[string]bool{}
-	for _, backend := range backends {
-		backendMap[backend.Address] = false
-	}
-	job := common.LoadBalancerJobInfo{}
-	_, err := c.DoRequest(
+	rtn := common.ELBBackendResponce{}
+	if _, err := c.DoRequest(
 		ctx,
 		http.MethodPost,
-		c.GetURL("listeners", listenerID, "members"),
-		backends,
-		&job,
-	)
-	if err != nil {
-		return nil, err
-	}
-	if _, _, err = c.WaitForELBJob(ctx, common.DefaultDuration, common.DefaultTimeout, job.JobID); err != nil {
-		return nil, err
-	}
-	returns, err := c.GetBackends(ctx, listenerID)
-	if err != nil {
-		return nil, err
-	}
-	var rtn common.ELBBackendList
-	for _, b := range returns {
-		if _, ok := backendMap[b.ServerAddress]; ok {
-			backendMap[b.ServerAddress] = true
-			rtn = append(rtn, b)
-		}
-	}
-	for address, b := range backendMap {
-		if !b {
-			return nil, fmt.Errorf("backend created for listener %s but not found, job id: %s", listenerID, address)
-		}
+		c.GetURL("pools", poolID, "members"),
+		backend,
+		&rtn,
+	); err != nil {
+		return common.ELBBackendResponce{}, err
 	}
 	return rtn, nil
 }
 
-func (c *Client) RemoveBackend(ctx context.Context, listenerID string, backendID string) error {
-	if listenerID == "" || backendID == "" {
-		return errors.New("listener id and backend id is required")
+func (c *Client) RemoveBackend(ctx context.Context, poolID string, memberID string) error {
+	if poolID == "" || memberID == "" {
+		return errors.New("pool id and member id is both required")
 	}
-	job := common.LoadBalancerJobInfo{}
-	input := map[string][]map[string]string{}
-	input["removeMember"] = []map[string]string{
-		map[string]string{"id": backendID},
-	}
-	if _, err := c.DoRequest(
+	_, err := c.DoRequest(
 		ctx,
-		http.MethodPost,
-		c.GetURL("listeners", listenerID, "members", "action"),
-		&input,
-		&job,
-	); err != nil {
-		return err
-	}
-	if _, _, err := c.WaitForELBJob(ctx, common.DefaultDuration, common.DefaultTimeout, job.JobID); err != nil {
-		return err
-	}
-	return nil
+		http.MethodDelete,
+		c.GetURL("pools", poolID, "members", memberID),
+		nil,
+		nil,
+	)
+	return err
 }
 
-func (c *Client) GetBackends(ctx context.Context, listenerID string) ([]*common.ELBBackendListItem, error) {
-	if listenerID == "" {
-		return nil, errors.New("listener id and backend id is required")
+func (c *Client) GetBackend(ctx context.Context, poolID string, memberID string) (common.ELBBackendResponce, error) {
+	if poolID == "" || memberID == "" {
+		return common.ELBBackendResponce{}, errors.New("pool id and member id is both required")
 	}
-	rtn := []*common.ELBBackendListItem{}
+	rtn := common.ELBBackendResponce{}
 	if _, err := c.DoRequest(
 		ctx,
 		http.MethodGet,
-		c.GetURL("listeners", listenerID, "members"),
+		c.GetURL("pools", poolID, "members", memberID),
 		nil,
 		&rtn,
 	); err != nil {
-		return nil, err
+		return common.ELBBackendResponce{}, err
 	}
 	return rtn, nil
 }

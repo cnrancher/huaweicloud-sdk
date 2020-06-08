@@ -25,9 +25,9 @@ func (c *Client) CreateEIP(ctx context.Context, info *common.EipAllocArg) (*comm
 
 func (c *Client) GetEIP(ctx context.Context, id string) (*common.EipInfo, error) {
 	if id == "" {
-		return nil, errors.New("eip id is required")
+		return nil, errors.New("[GetEIP]eip id is required")
 	}
-	rtn := common.EipInfo{}
+	rtn := common.EipResp{}
 	_, err := c.DoRequest(
 		ctx,
 		http.MethodGet,
@@ -38,14 +38,14 @@ func (c *Client) GetEIP(ctx context.Context, id string) (*common.EipInfo, error)
 	if err != nil {
 		return nil, err
 	}
-	return &rtn, nil
+	return &rtn.Eip, nil
 }
 
 func (c *Client) UpdateEIP(ctx context.Context, id string, info *common.EipAssocArg) (*common.EipInfo, error) {
 	if id == "" {
-		return nil, errors.New("eip id is required")
+		return nil, errors.New("[UpdateEIP]eip id is required")
 	}
-	rtn := common.EipInfo{}
+	rtn := common.EipResp{}
 	_, err := c.DoRequest(
 		ctx,
 		http.MethodPut,
@@ -56,12 +56,12 @@ func (c *Client) UpdateEIP(ctx context.Context, id string, info *common.EipAssoc
 	if err != nil {
 		return nil, err
 	}
-	return &rtn, nil
+	return &rtn.Eip, nil
 }
 
 func (c *Client) DeleteEIP(ctx context.Context, id string) error {
 	if id == "" {
-		return errors.New("eip id is required")
+		return errors.New("[DeleteEIP]eip id is required")
 	}
 	_, err := c.DoRequest(
 		ctx,

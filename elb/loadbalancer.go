@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/cnrancher/huaweicloud-sdk/common"
 )
@@ -80,21 +79,16 @@ func (c *Client) DeleteLoadBalancer(ctx context.Context, id string) error {
 }
 
 func (c *Client) CreateLoadBalancer(ctx context.Context, request *common.LoadBalancerRequest) (*common.LoadBalancerInfo, error) {
-	job := common.LoadBalancerJobInfo{}
+	lbInfo := common.LoadBalancerInfo{}
 	_, err := c.DoRequest(
 		ctx,
 		http.MethodPost,
 		c.GetURL("loadbalancers"),
 		request,
-		&job,
+		&lbInfo,
 	)
 	if err != nil {
 		return nil, err
 	}
-	_, info, err := c.WaitForELBJob(ctx, 30*time.Second, 5*time.Minute, job.JobID)
-	if err != nil {
-		return nil, err
-	}
-	id := (info.Entities["elb"].(map[string]interface{}))["id"].(string)
-	return c.GetLoadBalancer(ctx, id)
+	return c.GetLoadBalancer(ctx, lbInfo.Loadbalancer.ID)
 }

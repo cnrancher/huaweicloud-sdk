@@ -529,13 +529,26 @@ type BindInfoStatus struct {
 	PublicEndpoint  string `json:"publicEndpoint,omitempty"`
 }
 
-type LoadBalancerRequest struct {
+type LoadbalancerObject struct {
 	UpdatableLoadBalancerAttribute
-	LoadBalancerCommonInfo
-	AvailableZone string `json:"az,omitempty"`
-	ChargeMode    string `json:"charge_mode,omitempty"` //bandwidth/traffic, default to bandwidth
-	EIPType       string `json:"eip_type,omitempty"`    // 5_telcom/5_union/5_bgp/5_sbgp, default to 5_bgp
-	TenantID      string `json:"tenantId,omitempty"`
+	ID          string `json:"id,omitempty"`
+	CreateAt    string `json:"create_at,omitempty"`
+	UpdateAt    string `json:"update_at,omitempty"`
+	ProjectId   string `json:"project_id,omitempty"`
+	TenantID    string `json:"tenant_id,omitempty"`
+	VipSubnetID string `json:"vip_subnet_id"`
+	VIPAddress  string `json:"vip_address,omitempty"`
+	VipPortID   string `json:"vip_port_id,omitempty"`
+	Listeners   []struct {
+		ID string `json:"id,omitempty"`
+	} `json:"listeners,omitempty"`
+	Pools []struct {
+		ID string `json:"id,omitempty"`
+	} `json:"pools,omitempty"`
+}
+
+type LoadBalancerRequest struct {
+	Loadbalancer LoadbalancerObject `json:"loadbalancer"`
 }
 
 type LoadBalancerJobInfo struct {
@@ -544,28 +557,14 @@ type LoadBalancerJobInfo struct {
 }
 
 type UpdatableLoadBalancerAttribute struct {
-	AdminStateUp int32  `json:"admin_state_up,omitempty"`
-	Bandwidth    int64  `json:"bandwidth,omitempty"`
-	Description  string `json:"description,omitempty"`
-	Name         string `json:"name,omitempty"`
-}
-
-type LoadBalancerCommonInfo struct {
-	SecurityGroupID string `json:"security_group_id,omitempty"`
-	Type            string `json:"type,omitempty"` //Internal or External
-	VIPAddress      string `json:"vip_address,omitempty"`
-	VIPSubnetID     string `json:"vip_subnet_id,omitempty"`
-	VpcID           string `json:"vpc_id,omitempty"`
+	//AdminStateUp int32  `json:"admin_state_up,omitempty"`
+	//Bandwidth    int64  `json:"bandwidth,omitempty"`
+	Description string `json:"description,omitempty"`
+	Name        string `json:"name,omitempty"`
 }
 
 type LoadBalancerInfo struct {
-	ID         string `json:"id,omitempty"`
-	Status     string `json:"status,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
-	UpdateTime string `json:"update_time,omitempty"`
-
-	UpdatableLoadBalancerAttribute
-	LoadBalancerCommonInfo
+	Loadbalancer LoadbalancerObject `json:"loadbalancer"`
 }
 
 type LoadBalancerList struct {
@@ -573,9 +572,26 @@ type LoadBalancerList struct {
 	InstanceNum   string             `json:"instance_num,omitempty"`
 }
 
+type ELBListenerRequestObject struct {
+	TenantId                string   `json:"tenant_id,omitempty"`
+	ProjectId               string   `json:"project_id,omitempty"`
+	Name                    string   `json:"name,omitempty"`
+	Description             string   `json:"description,omitempty"`
+	Protocol                string   `json:"protocol,"`
+	ProtocolPort            int64    `json:"protocol_port,"`
+	LoadbalancerId          string   `json:"loadbalancer_id,"`
+	ConnectionLimit         int64    `json:"connection_limit,omitempty"`
+	AdminStateUp            bool     `json:"admin_state_up,omitempty"`
+	Http2Enable             bool     `json:"http2_enable,omitempty"`
+	DefaultPoolId           string   `json:"default_pool_id,omitempty"`
+	DefaultTlsContainerRef  string   `json:"default_tls_container_ref,omitempty"`
+	ClientCaTlsContainerRef string   `json:"client_ca_tls_container_ref,omitempty"`
+	SniContainerRefs        []string `json:"sni_container_refs,omitempty"`
+	TlsCiphersPolicy        string   `json:"tls_ciphers_policy,omitempty"`
+}
+
 type ELBListenerRequest struct {
-	ELBListenerCommon
-	UpdatableELBListenerAttribute
+	Listener ELBListenerRequestObject `json:"listener"`
 }
 
 type ELBListenerCommon struct {
@@ -588,6 +604,10 @@ type ELBListenerCommon struct {
 }
 
 type ELBListenerInfo struct {
+	Listener ELBListenerInfoObject `json:"listener"`
+}
+
+type ELBListenerInfoObject struct {
 	ID         string `json:"id,omitempty"`
 	Status     string `json:"status,omitempty"`
 	CreateTime string `json:"create_time,omitempty"`
@@ -614,7 +634,9 @@ type UpdatableELBListenerAttribute struct {
 	UDPTimeout              int32  `json:"udp_timeout,omitempty"`
 }
 
-type ELBListenerList []ELBListenerInfo
+type ELBListenerList struct {
+	Listeners []ELBListenerInfo `json:"listeners"`
+}
 
 type ELBHealthCheckRequest struct {
 	ListenerID string `json:"listener_id,omitempty"`
@@ -640,30 +662,111 @@ type ELBHealthCheckInfo struct {
 	UpdatableELBHealthCheckAttribute
 }
 
-type ELBBackendRequestItem struct {
-	ServerID string `json:"server_id,omitempty"`
-	Address  string `json:"address,omitempty"`
+type ELBBackendGroupRequest struct {
+	Pool ELBBackendGroup `json:"pool"`
 }
 
-type ELBBackendRequest []ELBBackendRequestItem
+type SessionPersistence struct {
+	Type               string `json:"type,omitempty"` // SOURCE_IP HTTP_COOKIE APP_COOKIE
+	CookieName         string `json:"cookie_name,omitempty"`
+	PersistenceTimeout int64  `json:"persistence_timeout,omitempty"`
+}
 
-type ELBBackendListItem struct {
-	ID         string `json:"id,omitempty"`
-	Status     string `json:"status,omitempty"` //ACTIVE/PENDING/ERROR
-	CreateTime string `json:"create_time,omitempty"`
-	UpdateTime string `json:"update_time,omitempty"`
+type ELBBackendGroup struct {
+	TenantID           string             `json:"tenant_id,omitempty"`
+	ProjectID          string             `json:"project_id,omitempty"`
+	Name               string             `json:"name,omitempty"`
+	Description        string             `json:"description,omitempty"`
+	Protocol           string             `json:"protocol"`
+	LbAlgorithm        string             `json:"lb_algorithm"`
+	AdminStateUp       bool               `json:"admin_state_up,omitempty"`
+	ListenerID         string             `json:"listener_id,omitempty"`
+	LoadbalancerID     string             `json:"loadbalancer_id,omitempty"`
+	SessionPersistence SessionPersistence `json:"session_persistence,omitempty"`
+}
 
-	Address       string `json:"address,omitempty"`
-	HealthStatus  string `json:"health_status,omitempty"` //NORMAL/ABNORMAL/UNAVAILABLE
-	ServerID      string `json:"server_id,omitempty"`
-	ServerAddress string `json:"server_address,omitempty"`
-	ServerName    string `json:"server_name,omitempty"`
-	Listeners     []struct {
+type ELBBackendGroupListRequest struct {
+	Marker          string `json:"marker,omitempty"`
+	Limit           int64  `json:"limit,omitempty"`
+	PageReverse     bool   `json:"page_reverse,omitempty"`
+	ID              string `json:"id,omitempty"`
+	TenantID        string `json:"tenant_id,omitempty"`
+	ProjectID       string `json:"project_id,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Description     string `json:"description,omitempty"`
+	HealthmonitorID string `json:"healthmonitor_id,omitempty"`
+	LoadbalancerID  string `json:"loadbalancer_id,omitempty"`
+	Protocol        string `json:"protocol,omitempty"`
+	LbAlgorithm     string `json:"lb_algorithm,omitempty"`
+	MemberAddress   string `json:"member_address,omitempty"`
+	MemberDeviceId  string `json:"member_device_id,omitempty"`
+}
+
+type ELBBackendGroupDetails struct {
+	Pool ELBBackendGroupListItem `json:"pool"`
+}
+
+type ELBBackendGroupListItem struct {
+	ID          string `json:"id,omitempty"`
+	TenantID    string `json:"tenant_id,omitempty"`
+	ProjectID   string `json:"project_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Potocol     string `json:"potocol,omitempty"`
+	LbAlgorithm string `json:"lb_algorithm,omitempty"`
+	Members     []struct {
+		ID string `json:"id,omitempty"`
+	} `json:"members,omitempty"`
+	HealthmonitorID string `json:"healthmonitor_id,omitempty"`
+	AdminStateUp    bool   `json:"admin_state_up,omitempty"`
+	Listeners       []struct {
 		ID string `json:"id,omitempty"`
 	} `json:"listeners,omitempty"`
+	Loadbalancers []struct {
+		ID string `json:"id,omitempty"`
+	} `json:"loadbalancers,omitempty"`
+	SessionPersistence SessionPersistence `json:"session_persistence,omitempty"`
+	PoolsLinks         []struct {
+		Href string `json:"href"`
+		Rel  string `json:"rel"`
+	} `json:"pools_links,omitempty"`
 }
 
-type ELBBackendList []*ELBBackendListItem
+type ELBBackendGroupObject struct {
+	Pool ELBBackendGroup `json:"pool"`
+}
+
+type ELBBackend struct {
+	TenantID     string `json:"tenant_id,omitempty"`
+	ProjectID    string `json:"project_id,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Address      string `json:"address,"`
+	ProtocolPort int64  `json:"protocol_port,"`
+	SubnetID     string `json:"subnet_id,"`
+	AdminStateUp bool   `json:"admin_state_up,omitempty"`
+	Weight       int64  `json:"weight,omitempty"`
+}
+
+type ELBBackendRequest struct {
+	Member ELBBackend `json:"member"`
+}
+
+type ELBBackendResponce struct {
+	Member ELBBackend `json:"member"`
+}
+
+type ELBBackendMember struct {
+	ID              string `json:"id,omitempty"`
+	TenantID        string `json:"tenant_id,omitempty"`
+	ProjectID       string `json:"project_id,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Address         string `json:"address,omitempty"`
+	ProtocolPort    int    `json:"protocol_port,omitempty"`
+	SubnetID        string `json:"subnet_id,omitempty"`
+	AdminStateUp    bool   `json:"admin_state_up,omitempty"`
+	Weight          int    `json:"weight,omitempty"`
+	OperatingStatus string `json:"operating_status,omitempty"`
+}
 
 type ELBQuotaList struct {
 	Quotas *struct {
@@ -714,4 +817,21 @@ type JobInfoV1 struct {
 	JobType    string                 `json:"job_type,omitempty"`
 	ErrorCode  string                 `json:"error_code,omitempty"`
 	FailReason string                 `json:"fail_reason,omitempty"`
+}
+
+type PrivateIpResp struct {
+	PrivateIp PrivateIp `json:"privateip"`
+}
+
+type PrivateIpListResp struct {
+	PrivateIps []PrivateIp `json:"privateips"`
+}
+
+type PrivateIp struct {
+	Status      string `json:"status,omitempty"`
+	ID          string `json:"id,omitempty"`
+	SubnetID    string `json:"subnet_id,omitempty"`
+	TenantID    string `json:"tenant_id,omitempty"`
+	DeviceOwner string `json:"device_owner,omitempty"`
+	IpAddress   string `json:"ip_address,omitempty"`
 }
